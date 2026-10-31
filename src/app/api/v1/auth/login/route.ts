@@ -86,10 +86,16 @@ export async function POST(request: Request) {
       user: userResponse,
     });
 
-    // Guardar JWT en cookie HttpOnly
+    const forwardedProto = request.headers.get("x-forwarded-proto");
+    const isHttps =
+      forwardedProto === "https" ||
+      request.url.startsWith("https://") ||
+      process.env.FORCE_SECURE_COOKIE === "true";
+
+    // Guardar JWT en cookie HttpOnly compatible con LAN (HTTP y HTTPS)
     response.cookies.set(AUTH_COOKIE_NAME, token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isHttps,
       sameSite: "lax",
       path: "/",
       maxAge: 8 * 60 * 60, // 8 horas

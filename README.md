@@ -89,8 +89,12 @@ ep-ema-control-catastro/
 │   └── ep-ema-system.log                  # Archivo de registro continuo con rotación a 5 MB
 ├── prisma/
 │   ├── schema.prisma                      # Esquema relacional de 11 modelos con índices de alto rendimiento
-│   └── seed.ts                            # Sembrado maestro determinista (SUPERADMIN y NAVE A)
+│   ├── seed-planos.json                   # Respaldo vectorial de cuadrículas de las 27 naves
+│   └── seed.ts                            # Sembrado maestro determinista (SUPERADMIN, 27 naves, planos y catastro)
 ├── public/                                # Activos institucionales (logos, isotipos, favicon)
+├── scripts/                               # Scripts de despliegue y autoarranque en Windows 10 Pro
+│   ├── iniciar-produccion.ps1             # Arranque resiliente en segundo plano (puerto 5050)
+│   └── registrar-tarea-inicio.ps1         # Registro en Programador de Tareas (Task Scheduler)
 ├── src/
 │   ├── proxy.ts                           # Protección perimetral server-side de rutas API (/api/v1/*)
 │   ├── instrumentation.ts                 # Hook institucional de arranque (colación MySQL y auto-asistencia)
@@ -619,61 +623,155 @@ pnpm build
 
 ### Semilla Oficial de Base de Datos (`prisma/seed.ts`)
 
-El script oficial de sembrado establece la cuenta maestra institucional y la infraestructura física inicial de la **`NAVE A`**:
+El script oficial de sembrado establece la infraestructura integral del sistema EP-EMA, aprovisionando la cuenta maestra de acceso, la totalidad de naves comerciales, los croquis espaciales vectoriales y el catastro físico:
 
 - **Usuario Administrador Principal (`SUPERADMIN`):**
   - **Identificador de Acceso / Cédula:** `admin`
   - **Correo Electrónico Oficial:** `sistema.epema@gmail.com`
   - **Contraseña Inicial de Producción:** `Ravine.Snooze.Cover9.Defendant`
   - **Bandera `mustChangePassword`:** `false`
-- **Infraestructura de `NAVE A`:**
-  - 33 puestos físicos reales categorizados (13 Bodegas, 14 Cubículos de alimentos preparados y 6 Núcleos comerciales).
-  - Plano matricial vectorial configurado (12 filas × 12 columnas).
-  - Marcación inicial de asistencia del día en estado `"Presente"`.
+- **Infraestructura Completa de las 27 Naves Institucionales:**
+  - Siembra determinista de las 27 naves oficiales (`AMBULANTES`, `NAVE A` hasta `NAVE Z`, `NAVE CF`, `NAVE QCP`, `NAVE BATERIAS`, etc.).
+  - Carga los **27 planos espaciales vectoriales** desde `prisma/seed-planos.json` (o respaldo SQL), recreando las cuadrículas exactas de filas y columnas de cada nave.
+  - Sincroniza todos los **puestos físicos** y asigna los **comerciantes catastrados** con sus respectivas actividades comerciales y cédulas desde el respaldo maestro.
+  - Inicializa la marcación de asistencia del día en estado `"Presente"` para los puestos ocupados.
 
 ---
 
-### Despliegue en Servidor MySQL Dedicado de Producción (Puerto 5050)
+### Guía Paso a Paso para Despliegue en Servidor de Producción (Windows 10 Pro + MySQL Local 3306 + Puerto 5050)
 
-En un servidor institucional de producción (Ubuntu Server / Debian / RHEL) con una base de datos MySQL 8.0 dedicada:
+Esta guía documenta la puesta en marcha definitiva de la plataforma en un servidor institucional dedicado con **Windows 10 Pro**, conviviendo de forma segura con otros sistemas sobre el motor nativo **MySQL Server en `localhost:3306`** y sirviendo la aplicación en el puerto **`5050`** accesible desde cualquier equipo o dispositivo móvil en la red local.
 
-1. **Variables de Entorno de Producción (`.env`):**
-   ```env
-   NODE_ENV=production
-   PORT=5050
+#### Paso 1: Configurar MySQL Nativo en `localhost:3306` (Sin Docker)
 
-   # Conexión optimizada al motor MySQL institucional
-   DATABASE_URL="mysql://ep_ema_prod:clave_alta_seguridad_2026@127.0.0.1:3306/ep_ema_db?connection_limit=15&pool_timeout=15&connect_timeout=10"
+1. En el servidor Windows 10 Pro, abre la consola de administración de MySQL (`mysql -u root -p`) o tu herramienta visual de base de datos preferida (MySQL Workbench, HeidiSQL, etc.).
+2. Crea la base de datos limpia con soporte completo de caracteres en español, sin interferir con otras bases de datos existentes en el servidor:
 
-   # Clave secreta robusta para firma criptográfica de tokens JWT
-   JWT_SECRET="epmma_jwt_super_secret_key_minimum_32_characters_long_2026"
+```sql
+CREATE DATABASE IF NOT EXISTS ep_ema_db CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci;
+```
 
-   # Notificaciones de correo con Gmail SMTP / Google Workspace
-   SMTP_HOST="smtp.gmail.com"
-   SMTP_PORT="465"
-   SMTP_SECURE="true"
-   SMTP_USER="sistema.epema@gmail.com"
-   SMTP_PASS="tu_contraseña_de_aplicacion_aqui"
-   EMAIL_FROM="EP-EMA Sistema de Gestión <sistema.epema@gmail.com>"
-   ```
+3. En la carpeta raíz del proyecto, copia `.env.example` a `.env` (si aún no existe) y edítalo:
 
-2. **Compilación y Puesta en Servicio:**
-   ```bash
-   # Generación del cliente Prisma optimizado
-   npx prisma generate
+```powershell
+Copy-Item .env.example .env
+notepad .env
+```
 
-   # Aplicación del esquema relacional
-   npx prisma db push
+4. En el archivo `.env`, comenta la línea de Docker (`3307`) y descomenta la línea de producción nativa (`3306`), configurando las credenciales de tu MySQL local:
 
-   # Opcional: Sembrado maestro si es primera instalación
-   npx prisma db seed
+```env
+# ── CONEXIÓN ACTIVA (Desarrollo con Docker en puerto 3307) ──
+# DATABASE_URL="mysql://ep_ema_user:ep_ema_pass@localhost:3307/ep_ema_db"
 
-   # Construcción de artefactos optimizados de Next.js
-   pnpm build
+# ── CONEXIÓN PARA PRODUCCIÓN (MySQL Nativo en Windows 10 Pro - Puerto por defecto 3306) ──
+DATABASE_URL="mysql://root:TU_CLAVE_MYSQL@localhost:3306/ep_ema_db?connection_limit=15&pool_timeout=15&connect_timeout=10"
+```
 
-   # Inicio del servicio de producción en puerto 5050
-   pnpm start
-   ```
+#### Paso 2: Sincronizar Prisma, Sembrar las 27 Naves/Croquis y Compilar
+
+Ejecuta en PowerShell dentro de la raíz del proyecto:
+
+```powershell
+pnpm install
+npx prisma generate
+npx prisma db push
+npx prisma db seed
+pnpm build
+```
+
+#### Paso 3: Abrir el Puerto 5050 en el Firewall de Windows 10 Pro para toda la Red Local
+
+Abre una consola de **PowerShell como Administrador** y crea la regla de entrada para permitir que todos los dispositivos de la red local puedan acceder:
+
+```powershell
+New-NetFirewallRule -DisplayName "EP-EMA Control Catastro (TCP 5050)" -Direction Inbound -LocalPort 5050 -Protocol TCP -Action Allow -Profile Any
+```
+
+#### Paso 4: Configurar Acceso HTTPS en el Puerto 5050 Autodetectando la IP del Servidor
+
+El sistema soporta conexiones tanto HTTP como HTTPS gracias a la cookie de sesión adaptativa compatible con LAN:
+
+- **Modo Desarrollo / Pruebas HTTPS con Next.js:**
+  ```powershell
+  pnpm dev:https
+  ```
+
+- **Acceso HTTPS en Producción con `mkcert` y `local-ssl-proxy`:**  
+  Detecta automáticamente la IP IPv4 activa del servidor y genera los certificados SSL válidos sin necesidad de conocer la IP de antemano:
+
+  ```powershell
+  # 1. Detectar automáticamente la IP IPv4 del servidor
+  $ServerIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -notmatch 'Loopback|vEthernet' -and $_.IPAddress -notmatch '^169\.254' } | Select-Object -First 1).IPAddress
+  Write-Host "IP detectada del servidor: $ServerIP"
+
+  # 2. Generar certificado SSL para localhost y la IP detectada
+  mkcert -install
+  mkcert localhost 127.0.0.1 $ServerIP
+
+  # 3. Iniciar el proxy SSL redirigiendo hacia el puerto 5050
+  npx local-ssl-proxy --key localhost+$ServerIP-key.pem --cert localhost+$ServerIP.pem --source 5050 --target 5050
+  ```
+
+#### Paso 5: Activar el Inicio Automático en Segundo Plano ante Reinicios de Windows
+
+Para que el sistema se inicie de forma autónoma en segundo plano cada vez que el servidor Windows 10 Pro arranque o se reinicie:
+
+1. Ejecuta el script de registro en una consola de **PowerShell como Administrador**:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\registrar-tarea-inicio.ps1
+```
+
+*El script `scripts/iniciar-produccion.ps1` verifica la conexión de red hacia MySQL mediante comprobaciones TCP (sin tocar ni alterar los servicios del sistema), verifica la compilación `.next` y levanta el servidor Next.js en `0.0.0.0:5050`, registrando la actividad en `logs/autostart-service.log`.*
+
+2. **Comandos Útiles para Gestión de la Tarea Programada:**
+
+```powershell
+# Iniciar la tarea programada inmediatamente en segundo plano
+Start-ScheduledTask -TaskName "EP-EMA-Control-Catastro-5050"
+
+# Ver el estado actual de la tarea
+Get-ScheduledTask -TaskName "EP-EMA-Control-Catastro-5050"
+
+# Revisar el registro de actividad del servicio en tiempo real
+Get-Content .\logs\autostart-service.log -Tail 50 -Wait
+
+# Detener la tarea en segundo plano si es necesario
+Stop-ScheduledTask -TaskName "EP-EMA-Control-Catastro-5050"
+```
+
+---
+
+### Resumen de Comandos que Ejecutarás en el Servidor Windows 10 Pro
+
+Una vez subidos los cambios al repositorio, cuando estés en la consola del servidor de producción solo tendrás que ejecutar:
+
+```powershell
+# 1. Clonar o actualizar el repositorio en el servidor
+git clone https://github.com/gaot539/ep-ema-control-catastro.git
+cd ep-ema-control-catastro
+
+# 2. Copiar .env.example a .env y descomentar la línea de localhost:3306 (comentando la de 3307)
+Copy-Item .env.example .env
+notepad .env
+
+# 3. Instalar dependencias, crear las 11 tablas en el MySQL local (3306), sembrar los 27 planos y compilar
+pnpm install
+npx prisma generate
+npx prisma db push
+npx prisma db seed
+pnpm build
+
+# 4. Abrir el puerto 5050 en el Firewall de Windows para que todos en la red puedan entrar
+New-NetFirewallRule -DisplayName "EP-EMA Control Catastro (TCP 5050)" -Direction Inbound -LocalPort 5050 -Protocol TCP -Action Allow -Profile Any
+
+# 5. Registrar la tarea en segundo plano (verifica BD sin tocar MySQL y levanta el sistema al reiniciar)
+powershell -ExecutionPolicy Bypass -File .\scripts\registrar-tarea-inicio.ps1
+
+# 6. Arrancar la tarea en segundo plano ahora mismo
+Start-ScheduledTask -TaskName "EP-EMA-Control-Catastro-5050"
+```
 
 ---
 
