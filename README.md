@@ -1,6 +1,6 @@
 # EP-EMA — Sistema de Gestión Operativa, Catastro y Control de Asistencia
 
-> **Empresa Pública – Empresa Municipal Mercado Mayorista de Ambato (EP-EMA)**  
+> **Empresa Pública – Empresa Municipal Mercado Mayorista de Ambato (EP-EMA)**
 > Plataforma tecnológica institucional para la administración integral de naves comerciales, catastro de comerciantes, planificación espacial mediante croquis modulares, control diario de asistencias con persistencia selectiva, auditoría operativa en tiempo real, gestión de contingencias de supervisión y persistencia relacional transaccional de alta concurrencia en MySQL 8.0.
 
 ---
@@ -23,13 +23,13 @@ El **Sistema de Gestión EP-EMA** es una solución digital integral de grado emp
 
 ### Estado de Madurez del Proyecto
 
-| Dimensión Operativa | Estado Actual | Madurez | Alcance y Cobertura Técnica |
-| :--- | :---: | :---: | :--- |
-| **Arquitectura Hexagonal Pura** | **Completado y Auditado** | **100%** | Desacoplamiento estricto de 4 capas: Dominio 100% puro (0 dependencias), Aplicación orquestadora basada en puertos, e Infraestructura con 6 adaptadores relacionales hacia MySQL 8.0 vía Prisma ORM. |
-| **Seguridad Perimetral y RBAC Multi-Tenant** | **Completado y Verificado** | **100%** | Proxy server-side (`src/proxy.ts`), autenticación JWT (`jose`) mediante cookies `HttpOnly`, aislamiento multi-tenant por naves para supervisores, protección anti-IDOR y mitigación CSPRNG. |
-| **Motor de Conciliación Catastral** | **Completado y Optimizado** | **100%** | Algoritmo determinista en 4 pasos con modo `UNIFICAR` automático para plantillas `REN04_950` (Bodegas), `ren04278` (Puestos) y `GENERICO`, sanitización multilínea, filtro de duplicados 100%, y reglas exclusivas para `NAVE P` y `AMBULANTES`. |
-| **Alta Concurrencia y Resiliencia** | **Completado y Certificado** | **100%** | Connection pool optimizado (`connection_limit=15`, `pool_timeout=15`, `connect_timeout=10`), deduplicación de promesas en vuelo (*Singleflight*), caché de sesión reactiva, logging centralizado en disco (`logs/ep-ema-system.log`) y fallback visual de conexión. |
-| **Exportación Documental Bimodal** | **Completado y Validado** | **100%** | Generación simétrica de actas e informes: reportes PDF vectoriales de alta precisión (`jsPDF` + `autotable`) y libros de cálculo nativos multi-hoja (`ExcelJS 4.4.0`) con autoajuste multi-fila y preservación de simbología. |
+| Dimensión Operativa                               |           Estado Actual           |    Madurez    | Alcance y Cobertura Técnica                                                                                                                                                                                                                                                      |
+| :------------------------------------------------- | :--------------------------------: | :------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Arquitectura Hexagonal Pura**              |  **Completado y Auditado**  | **100%** | Desacoplamiento estricto de 4 capas: Dominio 100% puro (0 dependencias), Aplicación orquestadora basada en puertos, e Infraestructura con 6 adaptadores relacionales hacia MySQL 8.0 vía Prisma ORM.                                                                            |
+| **Seguridad Perimetral y RBAC Multi-Tenant** | **Completado y Verificado** | **100%** | Proxy server-side (`src/proxy.ts`), autenticación JWT (`jose`) mediante cookies `HttpOnly`, aislamiento multi-tenant por naves para supervisores, protección anti-IDOR y mitigación CSPRNG.                                                                              |
+| **Motor de Conciliación Catastral**         | **Completado y Optimizado** | **100%** | Algoritmo determinista en 4 pasos con modo `UNIFICAR` automático para plantillas `REN04_950` (Bodegas), `ren04278` (Puestos) y `GENERICO`, sanitización multilínea, filtro de duplicados 100%, y reglas exclusivas para `NAVE P` y `AMBULANTES`.                   |
+| **Alta Concurrencia y Resiliencia**          | **Completado y Certificado** | **100%** | Connection pool optimizado (`connection_limit=15`, `pool_timeout=15`, `connect_timeout=10`), deduplicación de promesas en vuelo (*Singleflight*), caché de sesión reactiva, logging centralizado en disco (`logs/ep-ema-system.log`) y fallback visual de conexión. |
+| **Exportación Documental Bimodal**          |  **Completado y Validado**  | **100%** | Generación simétrica de actas e informes: reportes PDF vectoriales de alta precisión (`jsPDF` + `autotable`) y libros de cálculo nativos multi-hoja (`ExcelJS 4.4.0`) con autoajuste multi-fila y preservación de simbología.                                         |
 
 ---
 
@@ -232,24 +232,24 @@ ep-ema-control-catastro/
 
 El sistema está construido íntegramente sobre tecnologías abiertas modernas, garantizando independencia tecnológica, máxima compatibilidad y ausencia de costes por licenciamiento propietario:
 
-| Categoría Tecnológica | Herramienta / Librería | Versión Oficial | Propósito y Función en la Plataforma |
-| :--- | :--- | :---: | :--- |
-| **Framework Full-Stack** | **Next.js (App Router)** | `16.3.2` | Núcleo de la plataforma, renderizado híbrido, compilación Turbopack y Route Handlers backend. |
-| **Biblioteca de UI** | **React** | `19.2.8` | Construcción de componentes reactivos y gestión concurrente de estados. |
-| **Lenguaje Tipado** | **TypeScript** | `^5` | Tipado estático riguroso en modelos, puertos, servicios y componentes. |
-| **Motor de Estilos** | **Tailwind CSS** | `^4` | Sistema de diseño institucional basado en CSS moderno y variables nativas. |
-| **Persistencia Relacional** | **MySQL Server** | `8.0` | Base de datos relacional transaccional con soporte nativo para colación `utf8mb4_spanish_ci`. |
-| **ORM y Migraciones** | **Prisma ORM** | `6.19.3` | Mapeo objeto-relacional tipado, conexión transaccional y gestión de esquemas. |
-| **Generación de Libros Excel** | **ExcelJS** | `4.4.0` | Creación programática de libros `.xlsx` estilizados, bordes finos, paletas y autoajuste multi-fila en `/reportes` y `/controlsupervisores`. |
-| **Generación de Documentos PDF**| **jsPDF** + **jspdf-autotable** | `4.2.1` / `5.0.8`| Creación vectorial de croquis espaciales A4, actas de auditoría y reportes tabulares de asistencia. |
-| **Parseo de Archivos Tabulares**| **SheetJS (xlsx)** | `0.18.5` | Decodificación rápida de libros de cálculo `.xlsx`, `.xls` y plantillas de catastro. |
-| **Seguridad y Tokens JWT** | **jose** | `6.2.12` | Firma criptográfica y verificación perimetral de JSON Web Tokens en cookies `HttpOnly`. |
-| **Criptografía de Credenciales**| **bcryptjs** | `3.0.3` | Hashing unidireccional de contraseñas con factor de salado de 10 rondas. |
-| **Correo Transaccional** | **Nodemailer** | `10.2.1` | Envío de notificaciones de contraseñas temporales vía SMTP (Google Workspace / Gmail). |
-| **Manipulación de Fechas** | **date-fns** | `4.4.0` | Aritmética de fechas, zonificación en Ecuador (`America/Guayaquil`) y nombres en español. |
-| **Sistema de Notificaciones** | **Sonner** | `2.0.8` | Alertas flotantes (toasts) no intrusivas en la interfaz de usuario. |
-| **Ejecución y Semillas** | **tsx** | `4.23.15` | Ejecutor de TypeScript en Node.js para sembrado maestro y utilidades de mantenimiento. |
-| **Gestor de Paquetes** | **pnpm** | `11.20.0` | Manejador de dependencias rápido, eficiente en almacenamiento y determinista. |
+| Categoría Tecnológica                 | Herramienta / Librería                     |   Versión Oficial   | Propósito y Función en la Plataforma                                                                                                              |
+| :-------------------------------------- | :------------------------------------------ | :-------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Framework Full-Stack**          | **Next.js (App Router)**              |      `16.3.2`      | Núcleo de la plataforma, renderizado híbrido, compilación Turbopack y Route Handlers backend.                                                    |
+| **Biblioteca de UI**              | **React**                             |      `19.2.8`      | Construcción de componentes reactivos y gestión concurrente de estados.                                                                           |
+| **Lenguaje Tipado**               | **TypeScript**                        |        `^5`        | Tipado estático riguroso en modelos, puertos, servicios y componentes.                                                                             |
+| **Motor de Estilos**              | **Tailwind CSS**                      |        `^4`        | Sistema de diseño institucional basado en CSS moderno y variables nativas.                                                                         |
+| **Persistencia Relacional**       | **MySQL Server**                      |        `8.0`        | Base de datos relacional transaccional con soporte nativo para colación `utf8mb4_spanish_ci`.                                                    |
+| **ORM y Migraciones**             | **Prisma ORM**                        |      `6.19.3`      | Mapeo objeto-relacional tipado, conexión transaccional y gestión de esquemas.                                                                     |
+| **Generación de Libros Excel**   | **ExcelJS**                           |       `4.4.0`       | Creación programática de libros `.xlsx` estilizados, bordes finos, paletas y autoajuste multi-fila en `/reportes` y `/controlsupervisores`. |
+| **Generación de Documentos PDF** | **jsPDF** + **jspdf-autotable** | `4.2.1` / `5.0.8` | Creación vectorial de croquis espaciales A4, actas de auditoría y reportes tabulares de asistencia.                                               |
+| **Parseo de Archivos Tabulares**  | **SheetJS (xlsx)**                    |      `0.18.5`      | Decodificación rápida de libros de cálculo `.xlsx`, `.xls` y plantillas de catastro.                                                         |
+| **Seguridad y Tokens JWT**        | **jose**                              |      `6.2.12`      | Firma criptográfica y verificación perimetral de JSON Web Tokens en cookies `HttpOnly`.                                                         |
+| **Criptografía de Credenciales** | **bcryptjs**                          |       `3.0.3`       | Hashing unidireccional de contraseñas con factor de salado de 10 rondas.                                                                           |
+| **Correo Transaccional**          | **Nodemailer**                        |      `10.2.1`      | Envío de notificaciones de contraseñas temporales vía SMTP (Google Workspace / Gmail).                                                           |
+| **Manipulación de Fechas**       | **date-fns**                          |       `4.4.0`       | Aritmética de fechas, zonificación en Ecuador (`America/Guayaquil`) y nombres en español.                                                      |
+| **Sistema de Notificaciones**     | **Sonner**                            |       `2.0.8`       | Alertas flotantes (toasts) no intrusivas en la interfaz de usuario.                                                                                 |
+| **Ejecución y Semillas**         | **tsx**                               |      `4.23.15`      | Ejecutor de TypeScript en Node.js para sembrado maestro y utilidades de mantenimiento.                                                              |
+| **Gestor de Paquetes**            | **pnpm**                              |      `11.20.0`      | Manejador de dependencias rápido, eficiente en almacenamiento y determinista.                                                                      |
 
 ---
 
@@ -494,6 +494,7 @@ En `src/infrastructure/database/prisma.ts`, la conexión se instancia con parám
 ### Deduplicación de Peticiones en Vuelo (*Singleflight*)
 
 Para erradicar la contención de hilos y la ejecución redundante de consultas pesadas en base de datos:
+
 1. **Asistencia Diaria (`daily-attendance.service.ts`):** La variable global `__epmma_sync_in_flight` retiene la promesa de sincronización en curso. Múltiples peticiones entrantes concurrentes reciben la misma promesa compartida, eliminando bloqueos de tabla.
 2. **Sesiones de Control (`sesion-control-helper.ts`):** El mapa `sesionesEnVuelo` indexa las sesiones activas bajo la clave `${supervisorId}_${fechaJornada}_${naveId}`, deduplicando actualizaciones concurrentes de contadores en memoria.
 3. **Repositorios Cliente (`nave.repository.impl.ts` y `comerciante.repository.impl.ts`):** Emplean promesas en vuelo (`inFlightGetNaves`, `inFlightGetComerciantes`) para deduplicar peticiones consecutivas disparadas por componentes React montados en paralelo.
@@ -523,16 +524,16 @@ Para garantizar que la consola de producción y Turbopack permanezcan completame
 
 ### Matriz Oficial de Capacidades por Rol Institucional
 
-| Módulo del Sistema | SUPERADMIN | TIC | DIRECTOR | JEFE_OPERATIVO | SUPERVISOR |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **Toma de Listas (`/listas`)** | Edición Total | Edición Total | Solo Lectura | Solo Lectura | Edición (Naves Asignadas) |
-| **Reportes Operativos (`/reportes`)** | Acceso Total | Acceso Total | Acceso Total | Acceso Total | Filtrado por Naves Asignadas |
-| **Catastro de Comerciantes (`/catastro`)** | CRUD Total | CRUD Total | CRUD Total | CRUD Total | Solo Lectura (Sin Acciones) |
-| **Planificador de Naves (`/naves`)** | Acceso Total | Acceso Total | Consulta y Edición | Consulta y Edición | ❌ Sin Acceso |
-| **Control de Supervisores (`/controlsupervisores`)** | Acceso Total | Acceso Total | Acceso Total | Acceso Total | ❌ Sin Acceso |
-| **Ingreso de Catastro (`/ingreso-catastro`)** | Acceso Total | Acceso Total | Acceso Total | Acceso Total | Restringido a Naves Asignadas |
-| **Gestión de Usuarios (`/configuracion/usuarios`)** | Acceso Total | Acceso Total | ❌ Sin Acceso | ❌ Sin Acceso | ❌ Sin Acceso |
-| **Cambio de Contraseña Personal** | Sí | Sí | Sí | Sí | Sí |
+| Módulo del Sistema                                          |   SUPERADMIN   |      TIC      |      DIRECTOR      |   JEFE_OPERATIVO   |          SUPERVISOR          |
+| :----------------------------------------------------------- | :------------: | :------------: | :-----------------: | :-----------------: | :---------------------------: |
+| **Toma de Listas (`/listas`)**                       | Edición Total | Edición Total |    Solo Lectura    |    Solo Lectura    |  Edición (Naves Asignadas)  |
+| **Reportes Operativos (`/reportes`)**                |  Acceso Total  |  Acceso Total  |    Acceso Total    |    Acceso Total    | Filtrado por Naves Asignadas |
+| **Catastro de Comerciantes (`/catastro`)**           |   CRUD Total   |   CRUD Total   |     CRUD Total     |     CRUD Total     |  Solo Lectura (Sin Acciones)  |
+| **Planificador de Naves (`/naves`)**                 |  Acceso Total  |  Acceso Total  | Consulta y Edición | Consulta y Edición |         ❌ Sin Acceso         |
+| **Control de Supervisores (`/controlsupervisores`)** |  Acceso Total  |  Acceso Total  |    Acceso Total    |    Acceso Total    |         ❌ Sin Acceso         |
+| **Ingreso de Catastro (`/ingreso-catastro`)**        |  Acceso Total  |  Acceso Total  |    Acceso Total    |    Acceso Total    | Restringido a Naves Asignadas |
+| **Gestión de Usuarios (`/configuracion/usuarios`)** |  Acceso Total  |  Acceso Total  |    ❌ Sin Acceso    |    ❌ Sin Acceso    |         ❌ Sin Acceso         |
+| **Cambio de Contraseña Personal**                     |      Sí      |      Sí      |         Sí         |         Sí         |              Sí              |
 
 ---
 
@@ -540,35 +541,35 @@ Para garantizar que la consola de producción y Turbopack permanezcan completame
 
 El proxy server-side (`src/proxy.ts`) intercepta perimetralmente cada solicitud a `/api/v1/*`, validando la autenticidad del JWT y aplicando las restricciones de acceso por rol:
 
-| # | Métodos HTTP | Ruta del Endpoint | Descripción Funcional | Roles Autorizados |
-| :-: | :--- | :--- | :--- | :--- |
-| **1** | `POST` | `/api/v1/auth/login` | Autenticación de credenciales, verificación bcrypt y emisión de Cookie JWT HttpOnly | Público |
-| **2** | `POST` | `/api/v1/auth/logout` | Revocación y expiración inmediata de la Cookie de sesión | Autenticado |
-| **3** | `GET` | `/api/v1/auth/me` | Obtención del perfil, rol y naves autorizadas de la sesión activa | Autenticado |
-| **4** | `POST` | `/api/v1/auth/change-password` | Cambio de contraseña voluntario o de primer ingreso con validación anti-IDOR | Autenticado |
-| **5** | `POST` | `/api/v1/auth/forgot-password` | Generación CSPRNG de clave temporal segura de 16 caracteres y envío vía Gmail SMTP | Público |
-| **6** | `GET`, `POST` | `/api/v1/usuarios` | Catálogo de colaboradores institucionales y registro de nuevas cuentas | `SUPERADMIN`, `TIC` |
-| **7** | `GET`, `PUT`, `DELETE` | `/api/v1/usuarios/[id]` | Consulta detallada, actualización de datos/rol y baja lógica de usuario | `SUPERADMIN`, `TIC` |
-| **8** | `POST` | `/api/v1/usuarios/[id]/reset-password` | Restablecimiento administrativo de clave a contraseña temporal `${cedula}*` | `SUPERADMIN`, `TIC` |
-| **9** | `GET`, `POST` | `/api/v1/naves` | Listado general de naves con cupos y creación de nueva nave | GET: Todos \| POST: `SUPERADMIN`, `TIC` |
-| **10** | `GET`, `PUT`, `DELETE` | `/api/v1/naves/[id]` | Consulta de nave, actualización de capacidad/nombre y eliminación | GET: Todos \| PUT/DEL: `SUPERADMIN`, `TIC` |
-| **11** | `GET`, `PUT` | `/api/v1/naves/[id]/plano` | Lectura y actualización de la matriz espacial vectorial (`planoJson`) con candado de cupos | GET: Todos \| PUT: `SUPERADMIN`, `TIC`, `DIRECTOR`, `JEFE_OPERATIVO` |
-| **12** | `GET`, `PUT` | `/api/v1/naves/[id]/puestos` | Renombre atómico individual o masivo de puestos con sincronización triple | `SUPERADMIN`, `TIC` |
-| **13** | `GET` | `/api/v1/naves/reporte-vacantes` | Certificación oficial de espacios vacantes e inferencia de giro por cercanía | `SUPERADMIN`, `TIC`, `DIRECTOR`, `JEFE_OPERATIVO` |
-| **14** | `GET`, `POST` | `/api/v1/comerciantes` | Catastro nominal de comerciantes y alta directa de contribuyente | GET: Todos \| POST: `SUPERADMIN`, `TIC` |
-| **15** | `GET`, `PUT`, `DELETE` | `/api/v1/comerciantes/[id]` | Detalle, actualización de giro/actividad y baja lógica de comerciante | GET: Todos \| PUT/DEL: `SUPERADMIN`, `TIC` |
-| **16** | `POST` | `/api/v1/catastro/simular` | Simulación analítica y cálculo de diferencias en 4 pasos sin persistir en base de datos | `SUPERADMIN`, `TIC`, `SUPERVISOR` |
-| **17** | `POST` | `/api/v1/catastro/importar` | Confirmación e inserción transaccional por lotes del catastro mensual | `SUPERADMIN`, `TIC`, `SUPERVISOR` |
-| **18** | `GET`, `POST` | `/api/v1/asistencia` | Consulta de asistencias por nave/fecha y marcación de jornales en campo | GET: Todos \| POST: `SUPERADMIN`, `TIC`, `JEFE_OPERATIVO`, `SUPERVISOR` |
-| **19** | `POST` | `/api/v1/asistencia/persistencia` | Ejecución de persistencia selectiva arrastrando la jornada de referencia | `SUPERADMIN`, `TIC`, `JEFE_OPERATIVO`, `SUPERVISOR` |
-| **20** | `POST` | `/api/v1/asistencia/justificar-falta` | Transformación justificada de inasistencias pasadas con número de documento | `SUPERADMIN`, `TIC`, `JEFE_OPERATIVO`, `SUPERVISOR` |
-| **21** | `POST`, `DELETE` | `/api/v1/asistencia/observaciones` | Inserción y eliminación de novedades (`ObservacionesGeneral`, `Citaciones`, `Notificacion`) | `SUPERADMIN`, `TIC`, `JEFE_OPERATIVO`, `SUPERVISOR` |
-| **22** | `POST`, `DELETE` | `/api/v1/asistencia/permisos` | Registro y anulación de permisos por rango de fechas para comerciantes | `SUPERADMIN`, `TIC`, `JEFE_OPERATIVO`, `SUPERVISOR` |
-| **23** | `GET`, `POST` | `/api/v1/auditoria/sesiones` | Consulta de sesiones de control con filtros, insignias y radiografía nominal | `SUPERADMIN`, `TIC`, `DIRECTOR`, `JEFE_OPERATIVO` |
-| **24** | `GET`, `POST`, `DELETE`| `/api/v1/auditoria/dias-no-laborables`| Catálogo y registro de feriados, paros o días no laborables | `SUPERADMIN`, `TIC`, `DIRECTOR`, `JEFE_OPERATIVO` |
-| **25** | `GET`, `POST`, `DELETE`| `/api/v1/auditoria/permisos-supervisores`| Gestión de licencias de supervisores y delegación de coberturas operativas | `SUPERADMIN`, `TIC`, `DIRECTOR`, `JEFE_OPERATIVO` |
-| **26** | `GET` | `/api/v1/auditoria/reporte-supervisores`| Consolidado cuantitativo y cualitativo de jornales supervisados | `SUPERADMIN`, `TIC`, `DIRECTOR`, `JEFE_OPERATIVO` |
-| **27** | `POST` | `/api/v1/system-logs` | Receptor silencioso de errores del cliente web para volcado a `ep-ema-system.log` | Público / Autenticado |
+|      #      | Métodos HTTP                 | Ruta del Endpoint                           | Descripción Funcional                                                                              | Roles Autorizados                                                               |
+| :----------: | :---------------------------- | :------------------------------------------ | :-------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
+| **1** | `POST`                      | `/api/v1/auth/login`                      | Autenticación de credenciales, verificación bcrypt y emisión de Cookie JWT HttpOnly              | Público                                                                        |
+| **2** | `POST`                      | `/api/v1/auth/logout`                     | Revocación y expiración inmediata de la Cookie de sesión                                         | Autenticado                                                                     |
+| **3** | `GET`                       | `/api/v1/auth/me`                         | Obtención del perfil, rol y naves autorizadas de la sesión activa                                 | Autenticado                                                                     |
+| **4** | `POST`                      | `/api/v1/auth/change-password`            | Cambio de contraseña voluntario o de primer ingreso con validación anti-IDOR                      | Autenticado                                                                     |
+| **5** | `POST`                      | `/api/v1/auth/forgot-password`            | Generación CSPRNG de clave temporal segura de 16 caracteres y envío vía Gmail SMTP               | Público                                                                        |
+| **6** | `GET`, `POST`             | `/api/v1/usuarios`                        | Catálogo de colaboradores institucionales y registro de nuevas cuentas                             | `SUPERADMIN`, `TIC`                                                         |
+| **7** | `GET`, `PUT`, `DELETE`  | `/api/v1/usuarios/[id]`                   | Consulta detallada, actualización de datos/rol y baja lógica de usuario                           | `SUPERADMIN`, `TIC`                                                         |
+| **8** | `POST`                      | `/api/v1/usuarios/[id]/reset-password`    | Restablecimiento administrativo de clave a contraseña temporal `${cedula}*`                      | `SUPERADMIN`, `TIC`                                                         |
+| **9** | `GET`, `POST`             | `/api/v1/naves`                           | Listado general de naves con cupos y creación de nueva nave                                        | GET: Todos \| POST: `SUPERADMIN`, `TIC`                                     |
+| **10** | `GET`, `PUT`, `DELETE`  | `/api/v1/naves/[id]`                      | Consulta de nave, actualización de capacidad/nombre y eliminación                                 | GET: Todos \| PUT/DEL: `SUPERADMIN`, `TIC`                                  |
+| **11** | `GET`, `PUT`              | `/api/v1/naves/[id]/plano`                | Lectura y actualización de la matriz espacial vectorial (`planoJson`) con candado de cupos       | GET: Todos \| PUT: `SUPERADMIN`, `TIC`, `DIRECTOR`, `JEFE_OPERATIVO`    |
+| **12** | `GET`, `PUT`              | `/api/v1/naves/[id]/puestos`              | Renombre atómico individual o masivo de puestos con sincronización triple                         | `SUPERADMIN`, `TIC`                                                         |
+| **13** | `GET`                       | `/api/v1/naves/reporte-vacantes`          | Certificación oficial de espacios vacantes e inferencia de giro por cercanía                      | `SUPERADMIN`, `TIC`, `DIRECTOR`, `JEFE_OPERATIVO`                       |
+| **14** | `GET`, `POST`             | `/api/v1/comerciantes`                    | Catastro nominal de comerciantes y alta directa de contribuyente                                    | GET: Todos \| POST: `SUPERADMIN`, `TIC`                                     |
+| **15** | `GET`, `PUT`, `DELETE`  | `/api/v1/comerciantes/[id]`               | Detalle, actualización de giro/actividad y baja lógica de comerciante                             | GET: Todos \| PUT/DEL: `SUPERADMIN`, `TIC`                                  |
+| **16** | `POST`                      | `/api/v1/catastro/simular`                | Simulación analítica y cálculo de diferencias en 4 pasos sin persistir en base de datos          | `SUPERADMIN`, `TIC`, `SUPERVISOR`                                         |
+| **17** | `POST`                      | `/api/v1/catastro/importar`               | Confirmación e inserción transaccional por lotes del catastro mensual                             | `SUPERADMIN`, `TIC`, `SUPERVISOR`                                         |
+| **18** | `GET`, `POST`             | `/api/v1/asistencia`                      | Consulta de asistencias por nave/fecha y marcación de jornales en campo                            | GET: Todos \| POST: `SUPERADMIN`, `TIC`, `JEFE_OPERATIVO`, `SUPERVISOR` |
+| **19** | `POST`                      | `/api/v1/asistencia/persistencia`         | Ejecución de persistencia selectiva arrastrando la jornada de referencia                           | `SUPERADMIN`, `TIC`, `JEFE_OPERATIVO`, `SUPERVISOR`                     |
+| **20** | `POST`                      | `/api/v1/asistencia/justificar-falta`     | Transformación justificada de inasistencias pasadas con número de documento                       | `SUPERADMIN`, `TIC`, `JEFE_OPERATIVO`, `SUPERVISOR`                     |
+| **21** | `POST`, `DELETE`          | `/api/v1/asistencia/observaciones`        | Inserción y eliminación de novedades (`ObservacionesGeneral`, `Citaciones`, `Notificacion`) | `SUPERADMIN`, `TIC`, `JEFE_OPERATIVO`, `SUPERVISOR`                     |
+| **22** | `POST`, `DELETE`          | `/api/v1/asistencia/permisos`             | Registro y anulación de permisos por rango de fechas para comerciantes                             | `SUPERADMIN`, `TIC`, `JEFE_OPERATIVO`, `SUPERVISOR`                     |
+| **23** | `GET`, `POST`             | `/api/v1/auditoria/sesiones`              | Consulta de sesiones de control con filtros, insignias y radiografía nominal                       | `SUPERADMIN`, `TIC`, `DIRECTOR`, `JEFE_OPERATIVO`                       |
+| **24** | `GET`, `POST`, `DELETE` | `/api/v1/auditoria/dias-no-laborables`    | Catálogo y registro de feriados, paros o días no laborables                                       | `SUPERADMIN`, `TIC`, `DIRECTOR`, `JEFE_OPERATIVO`                       |
+| **25** | `GET`, `POST`, `DELETE` | `/api/v1/auditoria/permisos-supervisores` | Gestión de licencias de supervisores y delegación de coberturas operativas                        | `SUPERADMIN`, `TIC`, `DIRECTOR`, `JEFE_OPERATIVO`                       |
+| **26** | `GET`                       | `/api/v1/auditoria/reporte-supervisores`  | Consolidado cuantitativo y cualitativo de jornales supervisados                                     | `SUPERADMIN`, `TIC`, `DIRECTOR`, `JEFE_OPERATIVO`                       |
+| **27** | `POST`                      | `/api/v1/system-logs`                     | Receptor silencioso de errores del cliente web para volcado a `ep-ema-system.log`                 | Público / Autenticado                                                          |
 
 ---
 
@@ -600,6 +601,7 @@ pnpm dev
 ```
 
 Puertos y accesos en desarrollo:
+
 - **Aplicación Web EP-EMA:** `http://localhost:5050`
 - **Gestor Visual phpMyAdmin:** `http://localhost:8080`
 - **Base de Datos MySQL 8.0:** `localhost:3307` (`usuario: ep_ema_user` / `clave: ep_ema_pass` / `bd: ep_ema_db`)
@@ -693,11 +695,11 @@ New-NetFirewallRule -DisplayName "EP-EMA Control Catastro (TCP 5050)" -Direction
 El sistema soporta conexiones tanto HTTP como HTTPS gracias a la cookie de sesión adaptativa compatible con LAN:
 
 - **Modo Desarrollo / Pruebas HTTPS con Next.js:**
+
   ```powershell
   pnpm dev:https
   ```
-
-- **Acceso HTTPS en Producción con `mkcert` y `local-ssl-proxy`:**  
+- **Acceso HTTPS en Producción con `mkcert` y `local-ssl-proxy`:**
   Detecta automáticamente la IP IPv4 activa del servidor y genera los certificados SSL válidos sin necesidad de conocer la IP de antemano:
 
   ```powershell
@@ -773,9 +775,115 @@ powershell -ExecutionPolicy Bypass -File .\scripts\registrar-tarea-inicio.ps1
 Start-ScheduledTask -TaskName "EP-EMA-Control-Catastro-5050"
 ```
 
+
 ---
+## Catálogo de Scripts de Automatización, Sembrado y Servicio (`scripts/` y `prisma/`)
+
+El proyecto incluye un conjunto de scripts especializados en las carpetas `scripts/` y `prisma/` para automatizar la inicialización de la base de datos (tanto en desarrollo con Docker como en producción con MySQL nativo), la generación de datos de estrés (60 días de historial) y el arranque desatendido en segundo plano sobre **Windows 10 Pro**.
+
+### Resumen de Scripts del Sistema
+
+| Script / Archivo | Entorno | Propósito Principal |
+| :--- | :---: | :--- |
+| `scripts/inicializar-sistema.mjs` | **DEV / PROD** | **Asistente Maestro Interactivo.** Pregunta si deseas inicializar en `dev` o `produccion`. En **`produccion`** solicita los datos de conexión del servidor MySQL nativo (ej. `127.0.0.1:3306`), actualiza `.env`, cifra con `bcrypt` la contraseña del `SUPERADMIN` definida en `.env` y siembra las 27 naves, los 27 croquis espaciales, los 2.254 comerciantes y los 2.272 puestos desde `prisma/viejo.sql` **sin registros falsos**. En **`dev`** levanta/usa Docker (`ep_ema_mysql`), siembra toda la infraestructura y además inyecta **60 días de registros falsos de asistencia (135.240 registros)**. |
+| `scripts/generar-asistencia-60dias.mjs` | **DEV** | **Generador Independiente de Historial (60 Días).** Permite generar únicamente los 135.240 registros simulados de asistencia (2 meses) en formato JSON (`prisma/seed-asistencia-60dias.json`), exportarlos a `.sql` (`--sql`) o inyectarlos directamente en MySQL (`--db`) sin reiniciar las naves ni los comerciantes existentes. |
+| `prisma/seed.ts` | **DEV / PROD** | **Semilla Estándar de Prisma (`npx prisma db seed`).** Siembra el usuario `SUPERADMIN`, las 27 naves oficiales, los 27 planos espaciales, los puestos y comerciantes desde `prisma/viejo.sql` (o `prisma/seed-planos.json`) e inicializa únicamente la asistencia de la fecha actual en estado `"Presente"`. |
+| `scripts/iniciar-produccion.ps1` | **PROD (Win 10)** | **Arranque Autónomo en Segundo Plano.** Verifica mediante sockets TCP si MySQL responde en el puerto configurado en `.env` (sin tocar ni alterar el servicio MySQL del servidor), comprueba que el puerto `5050` esté libre, valida la compilación `.next` e inicia el servidor de producción (`pnpm start`), guardando el registro en `logs/autostart-service.log`. |
+| `scripts/registrar-tarea-inicio.ps1` | **PROD (Win 10)** | **Instalador de Tarea Programada en Windows.** Registra `scripts/iniciar-produccion.ps1` en el Programador de Tareas de Windows (`Task Scheduler`) bajo la tarea `EP-EMA-Control-Catastro-5050` con nivel `SYSTEM` para que el sistema arranque automáticamente en segundo plano cada vez que el servidor se encienda o reinicie. |
+---
+### Cómo Ejecutar Cada Script Paso a Paso
+
+#### 1. Asistente Maestro Interactivo (`scripts/inicializar-sistema.mjs`) — *Recomendado*
+
+Antes de ejecutarlo, asegúrate de que tu archivo `.env` contenga las variables del `SUPERADMIN` (el script leerá la contraseña en texto plano desde `SUPERADMIN_PASSWORD` y la cifrará automáticamente con `bcrypt`):
+
+```env
+SUPERADMIN_ID="u-super"
+SUPERADMIN_CEDULA="admin"
+SUPERADMIN_NOMBRES="Administrador"
+SUPERADMIN_APELLIDOS="Sistema"
+SUPERADMIN_CORREO="sistema.epema@gmail.com"
+SUPERADMIN_PASSWORD="Ravine.Snooze.Cover9.Defendant"
+```
+
+Para iniciar el asistente interactivo ejecuta:
+
+```powershell
+node .\scripts\inicializar-sistema.mjs
+```
+
+- **Opción A — Si escribes `dev`:**
+
+  1. Verifica que el contenedor Docker `ep_ema_mysql` esté activo (si no lo está, ejecuta `docker compose up -d` automáticamente).
+  2. Sincroniza las 11 tablas del esquema Prisma (`npx prisma db push`).
+  3. Crea el usuario `SUPERADMIN` con la contraseña cifrada desde `.env`.
+  4. Siembra las **27 naves**, los **27 planos espaciales (croquis)**, los **2.254 comerciantes** y los **2.272 puestos** desde `prisma/viejo.sql`.
+  5. Genera e inyecta automáticamente **135.240 registros falsos de asistencia (60 días)** para pruebas de reportes, auditoría y gráficas.
+- **Opción B — Si escribes `produccion`:**
+
+  1. Te pregunta interactivamente en consola:
+     - **Host del servidor MySQL** (por defecto `127.0.0.1`)
+     - **Puerto de MySQL** (por defecto `3306`)
+     - **Usuario de MySQL** (por defecto `root`)
+     - **Contraseña de MySQL**
+     - **Nombre de la Base de Datos** (por defecto `ep_ema_db`)
+  2. Te permite confirmar o personalizar en consola el usuario, correo y contraseña del `SUPERADMIN` leídos desde `.env`.
+  3. Actualiza automáticamente la variable `DATABASE_URL` dentro de tu archivo `.env`.
+  4. Sincroniza las 11 tablas en el servidor MySQL de producción y siembra en micro-lotes seguros el `SUPERADMIN`, las **27 naves**, los **27 croquis**, los **2.254 comerciantes** y los **2.272 puestos**, dejando **0 registros falsos de asistencia** (base de datos limpia lista para salir a producción).
+
+---
+
+#### 2. Generador Independiente de 60 Días de Asistencia (`scripts/generar-asistencia-60dias.mjs`)
+
+Si ya tienes la base de datos creada y solo deseas generar o inyectar nuevamente los 60 días de registros de prueba en desarrollo:
+
+```powershell
+# Solo generar el archivo JSON en prisma/seed-asistencia-60dias.json
+node .\scripts\generar-asistencia-60dias.mjs
+
+# Generar el JSON e inyectar los 135.240 registros directamente en la base de datos MySQL
+node .\scripts\generar-asistencia-60dias.mjs --db
+
+# Generar el JSON y además exportar el archivo SQL por lotes (prisma/seed-asistencia-60dias.sql)
+node .\scripts\generar-asistencia-60dias.mjs --sql
+```
+
+---
+
+#### 3. Semilla Estándar de Prisma (`prisma/seed.ts`)
+
+Si deseas ejecutar el sembrado estándar de Prisma usando la conexión `DATABASE_URL` que ya tengas activa en tu `.env` (crea `SUPERADMIN`, 27 naves, 27 croquis, puestos, comerciantes y la asistencia únicamente del día actual en estado `"Presente"`):
+
+```powershell
+npx prisma db seed
+```
+
+---
+
+#### 4. Scripts de Servicio en Segundo Plano para Windows 10 Pro (`scripts/*.ps1`)
+
+Para dejar el sistema configurado como servicio automático en el servidor de producción Windows 10 Pro (ejecutar en **PowerShell como Administrador**):
+
+```powershell
+# 1. Registrar la tarea programada para que inicie sola en cada arranque de Windows
+powershell -ExecutionPolicy Bypass -File .\scripts\registrar-tarea-inicio.ps1
+
+# 2. Iniciar el servicio en segundo plano inmediatamente sin reiniciar el servidor
+Start-ScheduledTask -TaskName "EP-EMA-Control-Catastro-5050"
+
+# 3. Monitorear en vivo el log de arranque y verificación de base de datos
+Get-Content .\logs\autostart-service.log -Tail 50 -Wait
+
+# 4. Detener o eliminar la tarea programada si se requiere mantenimiento
+Stop-ScheduledTask -TaskName "EP-EMA-Control-Catastro-5050"
+Unregister-ScheduledTask -TaskName "EP-EMA-Control-Catastro-5050" -Confirm:$false
+```
+
+---
+
+
 
 ## 11. Licencia y Derechos Institucionales
 
-Este software ha sido diseñado y desarrollado con carácter confidencial y de uso exclusivo para la **Empresa Pública – Empresa Municipal Mercado Mayorista de Ambato (EP-EMA)**.  
+Este software ha sido diseñado y desarrollado con carácter confidencial y de uso exclusivo para la **Empresa Pública – Empresa Municipal Mercado Mayorista de Ambato (EP-EMA)**.
 Todos los derechos patrimoniales y de propiedad intelectual reservados © 2026 EP-EMA. Prohibida su copia, distribución, modificación o reproducción no autorizada por la institución.
