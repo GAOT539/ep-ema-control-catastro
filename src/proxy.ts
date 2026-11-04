@@ -115,7 +115,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // 2. /api/v1/comerciantes (POST, PUT, DELETE): SUPERADMIN, TIC, DIRECTOR y JEFE_OPERATIVO
+  // 3. /api/v1/comerciantes (POST, PUT, DELETE): SUPERADMIN, TIC, DIRECTOR y JEFE_OPERATIVO
   if (
     pathname.startsWith("/api/v1/comerciantes") &&
     ["POST", "PUT", "DELETE"].includes(method)
@@ -128,7 +128,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // 3. /api/v1/catastro/simular y /api/v1/catastro/importar: SUPERADMIN, TIC, DIRECTOR, JEFE_OPERATIVO y SUPERVISOR
+  // 4. /api/v1/catastro/simular y /api/v1/catastro/importar: SUPERADMIN, TIC, DIRECTOR, JEFE_OPERATIVO y SUPERVISOR
   if (
     pathname.startsWith("/api/v1/catastro/simular") ||
     pathname.startsWith("/api/v1/catastro/importar")
@@ -141,7 +141,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // 3. /api/v1/asistencia (POST, DELETE): solo SUPERADMIN, TIC, JEFE_OPERATIVO y SUPERVISOR (DIRECTOR es solo lectura)
+  // 5. /api/v1/asistencia (POST, DELETE): solo SUPERADMIN, TIC, JEFE_OPERATIVO y SUPERVISOR (DIRECTOR es solo lectura)
   if (
     pathname.startsWith("/api/v1/asistencia") &&
     ["POST", "DELETE"].includes(method)
