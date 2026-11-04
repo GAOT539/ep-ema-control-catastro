@@ -70,8 +70,12 @@ export async function PUT(request: Request, { params }: RouteParams) {
       const nuevaCantidad = cantidadPuestos !== undefined ? Number(cantidadPuestos) : naveActual.cantidadPuestos;
       const nuevosSupervisores = Array.isArray(supervisores)
         ? supervisores
+            .map((s) => String(s).replace(/\s+/g, " ").trim())
+            .filter(Boolean)
         : Array.isArray(naveActual.supervisores)
         ? (naveActual.supervisores as string[])
+            .map((s) => String(s).replace(/\s+/g, " ").trim())
+            .filter(Boolean)
         : [];
 
       // 1. Actualizar datos de la nave
@@ -150,10 +154,16 @@ export async function PUT(request: Request, { params }: RouteParams) {
       // 4. Sincronizar navesAsignadas en supervisores
       const todosSupervisores = await tx.usuario.findMany({ where: { rol: "SUPERVISOR" } });
       for (const u of todosSupervisores) {
-        const nombreCompleto = `${u.nombres} ${u.apellidos}`.trim();
+        const nombreCompleto = `${u.nombres} ${u.apellidos}`.replace(/\s+/g, " ").trim();
         const asignadas = Array.isArray(u.navesAsignadas) ? (u.navesAsignadas as string[]) : [];
 
-        if (nuevosSupervisores.includes(nombreCompleto)) {
+        const coincide =
+          nuevosSupervisores.includes(nombreCompleto) ||
+          nuevosSupervisores.some(
+            (s) => s.localeCompare(nombreCompleto, undefined, { sensitivity: "accent" }) === 0
+          );
+
+        if (coincide) {
           if (!asignadas.includes(id)) {
             await tx.usuario.update({
               where: { id: u.id },

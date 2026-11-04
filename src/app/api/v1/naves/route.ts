@@ -130,7 +130,11 @@ export async function POST(request: Request) {
 
     const idNave = slug || `nave-${Date.now()}`;
     const cantidad = Number(cantidadPuestos) > 0 ? Number(cantidadPuestos) : 100;
-    const listaSupervisores = Array.isArray(supervisores) ? supervisores : [];
+    const listaSupervisores = Array.isArray(supervisores)
+      ? supervisores
+          .map((s) => String(s).replace(/\s+/g, " ").trim())
+          .filter(Boolean)
+      : [];
 
     // Asegurar colación en español en BD antes de crear la nave
     await asegurarColacionEspanolEnBD();
@@ -189,10 +193,16 @@ export async function POST(request: Request) {
         });
 
         for (const u of todosSupervisores) {
-          const nombreCompleto = `${u.nombres} ${u.apellidos}`.trim();
+          const nombreCompleto = `${u.nombres} ${u.apellidos}`.replace(/\s+/g, " ").trim();
           const asignadas = Array.isArray(u.navesAsignadas) ? (u.navesAsignadas as string[]) : [];
 
-          if (listaSupervisores.includes(nombreCompleto)) {
+          const coincide =
+            listaSupervisores.includes(nombreCompleto) ||
+            listaSupervisores.some(
+              (s) => s.localeCompare(nombreCompleto, undefined, { sensitivity: "accent" }) === 0
+            );
+
+          if (coincide) {
             if (!asignadas.includes(nave.id)) {
               await tx.usuario.update({
                 where: { id: u.id },

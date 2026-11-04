@@ -11,9 +11,8 @@ const PUBLIC_API_ROUTES = [
   "/api/v1/auth/logout",
 ];
 
-// Rutas que requieren roles específicos (prefijos)
+// Rutas que requieren roles específicos (prefijos para cualquier método)
 const ROLE_RESTRICTIONS: Record<string, string[]> = {
-  "/api/v1/usuarios": ["SUPERADMIN", "TIC"],
   "/api/v1/auditoria": ["SUPERADMIN", "TIC", "DIRECTOR", "JEFE_OPERATIVO"],
 };
 
@@ -72,25 +71,69 @@ export async function proxy(request: NextRequest) {
   }
 
   // Refuerzo de validación por método y matriz oficial de roles
-  // 1. /api/v1/naves y /api/v1/comerciantes (POST, PUT, DELETE): solo SUPERADMIN y TIC
+  // 1. /api/v1/usuarios:
+  // - GET: permitido para SUPERADMIN, TIC, DIRECTOR y JEFE_OPERATIVO (para selectores de supervisores en control y reportes)
+  // - POST, PUT, DELETE: exclusivamente SUPERADMIN y TIC (administración de cuentas y restablecimiento de claves)
+  if (pathname.startsWith("/api/v1/usuarios")) {
+    if (method === "GET") {
+      if (!["SUPERADMIN", "TIC", "DIRECTOR", "JEFE_OPERATIVO"].includes(rol)) {
+        return NextResponse.json(
+          { error: "Acceso denegado. No tiene permisos para consultar usuarios." },
+          { status: 403 }
+        );
+      }
+    } else if (["POST", "PUT", "DELETE"].includes(method)) {
+      if (!["SUPERADMIN", "TIC"].includes(rol)) {
+        return NextResponse.json(
+          { error: "Acceso denegado. Solo SUPERADMIN y TIC pueden administrar usuarios." },
+          { status: 403 }
+        );
+      }
+    }
+  }
+
+  // 2. /api/v1/naves: SUPERADMIN, TIC, DIRECTOR y JEFE_OPERATIVO tienen acceso total
+  if (pathname.startsWith("/api/v1/naves")) {
+    // Reporte de vacantes: exclusivo para roles directivos/administrativos
+    if (pathname.startsWith("/api/v1/naves/reporte-vacantes")) {
+      if (!["SUPERADMIN", "TIC", "DIRECTOR", "JEFE_OPERATIVO"].includes(rol)) {
+        return NextResponse.json(
+          { error: "Acceso denegado. No tiene permisos para consultar el reporte de vacantes." },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Mutaciones (POST, PUT, DELETE): creación, edición, plano, puestos y eliminación
+    if (["POST", "PUT", "DELETE"].includes(method)) {
+      if (!["SUPERADMIN", "TIC", "DIRECTOR", "JEFE_OPERATIVO"].includes(rol)) {
+        return NextResponse.json(
+          { error: "Acceso denegado. Solo roles directivos y administrativos pueden modificar o registrar naves." },
+          { status: 403 }
+        );
+      }
+    }
+  }
+
+  // 2. /api/v1/comerciantes (POST, PUT, DELETE): SUPERADMIN, TIC, DIRECTOR y JEFE_OPERATIVO
   if (
-    (pathname.startsWith("/api/v1/naves") || pathname.startsWith("/api/v1/comerciantes")) &&
+    pathname.startsWith("/api/v1/comerciantes") &&
     ["POST", "PUT", "DELETE"].includes(method)
   ) {
-    if (!["SUPERADMIN", "TIC"].includes(rol)) {
+    if (!["SUPERADMIN", "TIC", "DIRECTOR", "JEFE_OPERATIVO"].includes(rol)) {
       return NextResponse.json(
-        { error: "Acceso denegado. Solo SUPERADMIN y TIC pueden modificar o registrar naves y comerciantes." },
+        { error: "Acceso denegado. Solo roles directivos y administrativos pueden modificar o registrar comerciantes." },
         { status: 403 }
       );
     }
   }
 
-  // 2. /api/v1/catastro/simular y /api/v1/catastro/importar: solo SUPERADMIN, TIC y SUPERVISOR
+  // 3. /api/v1/catastro/simular y /api/v1/catastro/importar: SUPERADMIN, TIC, DIRECTOR, JEFE_OPERATIVO y SUPERVISOR
   if (
     pathname.startsWith("/api/v1/catastro/simular") ||
     pathname.startsWith("/api/v1/catastro/importar")
   ) {
-    if (!["SUPERADMIN", "TIC", "SUPERVISOR"].includes(rol)) {
+    if (!["SUPERADMIN", "TIC", "DIRECTOR", "JEFE_OPERATIVO", "SUPERVISOR"].includes(rol)) {
       return NextResponse.json(
         { error: "Acceso denegado. No tiene permisos para importar o simular catastro." },
         { status: 403 }
