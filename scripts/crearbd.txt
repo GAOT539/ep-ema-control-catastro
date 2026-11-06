@@ -1,0 +1,21 @@
+-- 1. Crear la base de datos con soporte UTF-8 y colación en español (diferencia N de Ñ)
+CREATE DATABASE IF NOT EXISTS `ep_ema_db`
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_spanish_ci;
+
+-- 2. Crear el usuario dedicado para 127.0.0.1 y localhost con la clave indicada
+CREATE USER IF NOT EXISTS 'ep_ema_user'@'127.0.0.1' IDENTIFIED BY 'Ravine.Snooze.Cover9.Defendant';
+CREATE USER IF NOT EXISTS 'ep_ema_user'@'localhost' IDENTIFIED BY 'Ravine.Snooze.Cover9.Defendant';
+
+-- Asegurar la clave en caso de que el usuario ya hubiera sido creado previamente
+ALTER USER 'ep_ema_user'@'127.0.0.1' IDENTIFIED BY 'Ravine.Snooze.Cover9.Defendant';
+ALTER USER 'ep_ema_user'@'localhost' IDENTIFIED BY 'Ravine.Snooze.Cover9.Defendant';
+
+-- 3. Otorgar todos los permisos exclusivamente sobre ep_ema_db
+GRANT ALL PRIVILEGES ON `ep_ema_db`.* TO 'ep_ema_user'@'127.0.0.1';
+GRANT ALL PRIVILEGES ON `ep_ema_db`.* TO 'ep_ema_user'@'localhost';
+
+-- 4. Aplicar cambios y verificar
+FLUSH PRIVILEGES;
+SHOW GRANTS FOR 'ep_ema_user'@'127.0.0.1';
+EXIT;

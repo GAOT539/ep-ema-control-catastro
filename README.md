@@ -775,22 +775,24 @@ powershell -ExecutionPolicy Bypass -File .\scripts\registrar-tarea-inicio.ps1
 Start-ScheduledTask -TaskName "EP-EMA-Control-Catastro-5050"
 ```
 
-
 ---
+
 ## Catálogo de Scripts de Automatización, Sembrado y Servicio (`scripts/` y `prisma/`)
 
 El proyecto incluye un conjunto de scripts especializados en las carpetas `scripts/` y `prisma/` para automatizar la inicialización de la base de datos (tanto en desarrollo con Docker como en producción con MySQL nativo), la generación de datos de estrés (60 días de historial) y el arranque desatendido en segundo plano sobre **Windows 10 Pro**.
 
 ### Resumen de Scripts del Sistema
 
-| Script / Archivo | Entorno | Propósito Principal |
-| :--- | :---: | :--- |
-| `scripts/inicializar-sistema.mjs` | **DEV / PROD** | **Asistente Maestro Interactivo.** Pregunta si deseas inicializar en `dev` o `produccion`. En **`produccion`** solicita los datos de conexión del servidor MySQL nativo (ej. `127.0.0.1:3306`), actualiza `.env`, cifra con `bcrypt` la contraseña del `SUPERADMIN` definida en `.env` y siembra las 27 naves, los 27 croquis espaciales, los 2.254 comerciantes y los 2.272 puestos desde `prisma/viejo.sql` **sin registros falsos**. En **`dev`** levanta/usa Docker (`ep_ema_mysql`), siembra toda la infraestructura y además inyecta **60 días de registros falsos de asistencia (135.240 registros)**. |
-| `scripts/generar-asistencia-60dias.mjs` | **DEV** | **Generador Independiente de Historial (60 Días).** Permite generar únicamente los 135.240 registros simulados de asistencia (2 meses) en formato JSON (`prisma/seed-asistencia-60dias.json`), exportarlos a `.sql` (`--sql`) o inyectarlos directamente en MySQL (`--db`) sin reiniciar las naves ni los comerciantes existentes. |
-| `prisma/seed.ts` | **DEV / PROD** | **Semilla Estándar de Prisma (`npx prisma db seed`).** Siembra el usuario `SUPERADMIN`, las 27 naves oficiales, los 27 planos espaciales, los puestos y comerciantes desde `prisma/viejo.sql` (o `prisma/seed-planos.json`) e inicializa únicamente la asistencia de la fecha actual en estado `"Presente"`. |
-| `scripts/iniciar-produccion.ps1` | **PROD (Win 10)** | **Arranque Autónomo en Segundo Plano.** Verifica mediante sockets TCP si MySQL responde en el puerto configurado en `.env` (sin tocar ni alterar el servicio MySQL del servidor), comprueba que el puerto `5050` esté libre, valida la compilación `.next` e inicia el servidor de producción (`pnpm start`), guardando el registro en `logs/autostart-service.log`. |
-| `scripts/registrar-tarea-inicio.ps1` | **PROD (Win 10)** | **Instalador de Tarea Programada en Windows.** Registra `scripts/iniciar-produccion.ps1` en el Programador de Tareas de Windows (`Task Scheduler`) bajo la tarea `EP-EMA-Control-Catastro-5050` con nivel `SYSTEM` para que el sistema arranque automáticamente en segundo plano cada vez que el servidor se encienda o reinicie. |
+| Script / Archivo                          |         Entorno         | Propósito Principal                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| :---------------------------------------- | :---------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/inicializar-sistema.mjs`       |  **DEV / PROD**  | **Asistente Maestro Interactivo.** Pregunta si deseas inicializar en `dev` o `produccion`. En **`produccion`** solicita los datos de conexión del servidor MySQL nativo (ej. `127.0.0.1:3306`), actualiza `.env`, cifra con `bcrypt` la contraseña del `SUPERADMIN` definida en `.env` y siembra las 27 naves, los 27 croquis espaciales, los 2.254 comerciantes y los 2.272 puestos desde `prisma/viejo.sql` **sin registros falsos**. En **`dev`** levanta/usa Docker (`ep_ema_mysql`), siembra toda la infraestructura y además inyecta **60 días de registros falsos de asistencia (135.240 registros)**. |
+| `scripts/generar-asistencia-60dias.mjs` |      **DEV**      | **Generador Independiente de Historial (60 Días).** Permite generar únicamente los 135.240 registros simulados de asistencia (2 meses) en formato JSON (`prisma/seed-asistencia-60dias.json`), exportarlos a `.sql` (`--sql`) o inyectarlos directamente en MySQL (`--db`) sin reiniciar las naves ni los comerciantes existentes.                                                                                                                                                                                                                                                                                                                    |
+| `prisma/seed.ts`                        |  **DEV / PROD**  | **Semilla Estándar de Prisma (`npx prisma db seed`).** Siembra el usuario `SUPERADMIN`, las 27 naves oficiales, los 27 planos espaciales, los puestos y comerciantes desde `prisma/viejo.sql` (o `prisma/seed-planos.json`) e inicializa únicamente la asistencia de la fecha actual en estado `"Presente"`.                                                                                                                                                                                                                                                                                                                                        |
+| `scripts/iniciar-produccion.ps1`        | **PROD (Win 10)** | **Arranque Autónomo en Segundo Plano.** Verifica mediante sockets TCP si MySQL responde en el puerto configurado en `.env` (sin tocar ni alterar el servicio MySQL del servidor), comprueba que el puerto `5050` esté libre, valida la compilación `.next` e inicia el servidor de producción (`pnpm start`), guardando el registro en `logs/autostart-service.log`.                                                                                                                                                                                                                                                                              |
+| `scripts/registrar-tarea-inicio.ps1`    | **PROD (Win 10)** | **Instalador de Tarea Programada en Windows.** Registra `scripts/iniciar-produccion.ps1` en el Programador de Tareas de Windows (`Task Scheduler`) bajo la tarea `EP-EMA-Control-Catastro-5050` con nivel `SYSTEM` para que el sistema arranque automáticamente en segundo plano cada vez que el servidor se encienda o reinicie.                                                                                                                                                                                                                                                                                                                      |
+
 ---
+
 ### Cómo Ejecutar Cada Script Paso a Paso
 
 #### 1. Asistente Maestro Interactivo (`scripts/inicializar-sistema.mjs`) — *Recomendado*
@@ -882,6 +884,24 @@ Unregister-ScheduledTask -TaskName "EP-EMA-Control-Catastro-5050" -Confirm:$fals
 ---
 
 
+
+-- 1. Eliminar los registros de asistencia en ese rango
+DELETE FROM `registros_asistencia`
+WHERE `fecha` BETWEEN '2026-11-06' AND '2026-11-09';
+
+-- 2. Eliminar las sesiones de control de los supervisores en ese mismo rango
+DELETE FROM `sesiones_control_supervisor`
+WHERE `fechaJornada` BETWEEN '2026-11-06' AND '2026-11-09';
+
+--------------------------------------------------
+
+-- 1. Borrar asistencias anteriores a la fecha de inicio
+DELETE FROM `registros_asistencia`
+WHERE `fecha` < '2026-11-10';
+
+-- 2. Borrar sesiones de control anteriores a la fecha de inicio
+DELETE FROM `sesiones_control_supervisor`
+WHERE `fechaJornada` < '2026-11-10';
 
 ## 11. Licencia y Derechos Institucionales
 
